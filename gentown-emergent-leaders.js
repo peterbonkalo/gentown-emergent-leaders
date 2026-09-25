@@ -127,10 +127,13 @@
 
 	// --- Setup ------------------------------------------------------------
 	Mod.afterLoad(function () {
-		// Give every existing leaderless town a leader on load.
-		regToArray("town").forEach((town) => {
-			if (!town.leader || !regGet("individual", town.leader)) createLeader(town);
-		});
+		// NOTE: we deliberately don't touch reg/planet here. Mod.afterLoad
+		// fires on the page's "load" event, which happens BEFORE a game is
+		// actually started or loaded (planet is still null at that point) -
+		// touching reg here throws and silently breaks the game's own
+		// startup sequence (infinite loading screen). Assigning leaders to
+		// existing towns is instead handled by the "individualAssignLeaders"
+		// daily event below, which only ever runs once a game is live.
 
 		// Surface leaders + traits on the town panel and on the individual's
 		// own profile, using the game's existing info-panel system.
